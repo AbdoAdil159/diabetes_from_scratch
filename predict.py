@@ -47,7 +47,7 @@ st.markdown('<hr>', unsafe_allow_html=True)
 # Button to make the prediction
 if st.button('Predict Diabetes'):
     probability = predict(input_data)
-    if probability == 0:        
+    if probability == 1:        
         st.write(f'This person has **diabetes** based on the prediction')
     else:
         st.write(f'This person **does not have diabetes** based on the prediction')
