@@ -1,4 +1,3 @@
-import pandas as pd
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.model_selection import cross_validate, GridSearchCV

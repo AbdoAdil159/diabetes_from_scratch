@@ -1,7 +1,6 @@
 import joblib
 import pandas as pd
 import streamlit as st
-from sklearn.preprocessing import StandardScaler
 from utils import *
 
 def input_prep(input_: pd.DataFrame, data: pd.DataFrame)->pd.DataFrame:
