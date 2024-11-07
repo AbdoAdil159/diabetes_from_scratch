@@ -11,7 +11,7 @@ This is a simple code that uses the best practices of ML for diabetes prediction
 - predict.py: contains the code of user interface with streamlit 
 
 ## Techniques used
-- Feature engineering (Dealing with outliers, scaling, encoding, extracting new features)
+- Feature engineering (imputing for zero values, Dealing with outliers, scaling, encoding, extracting new features)
 - Model evaluation, hypertuning, voting
 - Deployment
 
@@ -28,7 +28,7 @@ This is a simple code that uses the best practices of ML for diabetes prediction
 - CatBoost
 
 ## Performance metrics of the final model
-- Accuracy: 0.77
-- F1Score: 0.636
-- ROC_AUC: 0.83
+- Accuracy: 0.764
+- F1Score: 0.63689
+- ROC_AUC: 0.8358
 

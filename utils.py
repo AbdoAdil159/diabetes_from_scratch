@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
@@ -8,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+from sklearn.impute import KNNImputer
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -101,43 +103,49 @@ def one_hot_encoder(dataframe, categorical_cols, drop_first=False):
 #                 Dataset preparation                       #
 #############################################################
 
-scaler = StandardScaler()
-
-
 def diabetes_data_prep(dataframe):
+    
+    # Imputing for zero values
+    imputer = KNNImputer(n_neighbors=5)
+    cols_with_zero = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
+    for col in cols_with_zero:
+        dataframe.loc[dataframe[col] == 0, col] = np.nan
+    dataframe = pd.DataFrame(imputer.fit_transform(dataframe), columns=dataframe.columns)
+    
+    # capitalizing column names
     dataframe.columns = [col.upper() for col in dataframe.columns]
 
+    # Extracting new features
     # Glucose
     dataframe['NEW_GLUCOSE_CAT'] = pd.cut(x=dataframe['GLUCOSE'], bins=[-1, 139, 200], labels=["normal", "prediabetes"])
-
     # Age
     dataframe.loc[(dataframe['AGE'] < 35), "NEW_AGE_CAT"] = 'young'
     dataframe.loc[(dataframe['AGE'] >= 35) & (dataframe['AGE'] <= 55), "NEW_AGE_CAT"] = 'middleage'
     dataframe.loc[(dataframe['AGE'] > 55), "NEW_AGE_CAT"] = 'old'
-
     # BMI
     dataframe['NEW_BMI_RANGE'] = pd.cut(x=dataframe['BMI'], bins=[-1, 18.5, 24.9, 29.9, 100],
                                         labels=["underweight", "healty", "overweight", "obese"])
-
     # BloodPressure
     dataframe['NEW_BLOODPRESSURE'] = pd.cut(x=dataframe['BLOODPRESSURE'], bins=[-1, 79, 89, 123],
                                             labels=["normal", "hs1", "hs2"])
 
+    # Encoding
     cat_cols, num_cols, car_cols = grab_columns(dataframe, num_cat_thresold=5, card_thresold=20)
-
     cat_cols = [col for col in cat_cols if "OUTCOME" not in col]
-
     dataframe = one_hot_encoder(dataframe, cat_cols, drop_first=True)
     
     dataframe.columns = [col.upper() for col in dataframe.columns]
 
+    # Dealing with outliers
     cat_cols, num_cols, car_cols = grab_columns(dataframe, num_cat_thresold=5, card_thresold=20)
-
     replace_with_thresholds(dataframe, "INSULIN")
-
+    
+    # Scaling
+    scaler = StandardScaler()
     X_scaled = scaler.fit_transform(dataframe[num_cols])
     dataframe[num_cols] = pd.DataFrame(X_scaled, columns=dataframe[num_cols].columns)
 
+    # X,y
     y = dataframe["OUTCOME"]
     X = dataframe.drop(["OUTCOME"], axis=1)
 

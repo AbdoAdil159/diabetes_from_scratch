@@ -30,7 +30,7 @@ classifiers = [('KNN', KNeighborsClassifier(), knn_params),
                ("CART", DecisionTreeClassifier(), cart_params),
                ("RF", RandomForestClassifier(), rf_params),
                ('XGBoost', XGBClassifier(use_label_encoder=False, eval_metric='logloss'), xgboost_params),
-               ('LightGBM', LGBMClassifier(), lightgbm_params)]
+               ('LightGBM', LGBMClassifier(verbose=-1), lightgbm_params)]
 
 def hyperparameter_optimization(X, y, cv=3, scoring="roc_auc"):
     print("Hyperparameter Optimization....")

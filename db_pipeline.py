@@ -2,7 +2,6 @@ import joblib
 from utils import *
 from config import *
 
-
 def main():
     df = pd.read_csv("diabetes.csv")
     X, y = diabetes_data_prep(df)
